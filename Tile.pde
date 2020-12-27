@@ -3,11 +3,27 @@ class Tile {
   Location location;
   int value;
   boolean immutable;
+  color highlight;
   
   Tile(Location location, int value, boolean immutable) {
     this.location = location;
     this.value = value;
     this.immutable = immutable;
+    this.highlight = color(255, 255, 255, 0);
+  }
+  
+  void setHightlight(color hightlight) {
+    this.highlight = hightlight;
+  }
+  
+  int getValue() {
+    return value;
+  }
+  
+  void plusOne() {
+    if (!immutable) {
+      value = (value + 1) % 10;
+    }
   }
   
   void setValue(int value) {
@@ -15,12 +31,12 @@ class Tile {
   }
   
   void show() {
-    noFill();
+    fill(highlight);    
     rect(location.getXValue(), location.getYValue(), SCALE, SCALE);
     if (immutable) {
-      fill(WHITE);
-    } else {
       fill(BLUE);
+    } else {
+      fill(WHITE);
     }
     if (value != 0) {
       text(value, location.getXValue() + SCALE / 2, location.getYValue() + SCALE / 2);

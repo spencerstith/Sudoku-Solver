@@ -1,7 +1,6 @@
 class Game {
 
   Tile[][] tiles;
-  Location current;
 
   Game(int[][] board) {
     tiles = new Tile[9][9];
@@ -15,9 +14,8 @@ class Game {
           );
       }
     }
-    this.current = new Location(0, 0);
   }
-  
+
   Tile getTile(int row, int col) {
     return tiles[row][col];
   }
@@ -38,18 +36,41 @@ class Game {
     line(0, 6 * SCALE, width, 6 * SCALE);
     strokeWeight(1);
   }
-  
-  Location getNextLocation(Location current) {
-    int col = current.getC() + 1;
+
+  Location getLastLocation(Location current) {
     int row = current.getR();
+    int col = current.getC() - 1;
+    if (col <= -1) {
+      row--;
+      col = 8;
+      if (row <= -1) {
+        return new Location(-1, -1);
+      }
+    }
+    // Keep going if it is immutable
+    if (tiles[row][col].isImmutable()) {
+      return getLastLocation(new Location(row, col));
+    } else {
+      return new Location(row, col);
+    }
+  }
+
+  Location getNextLocation(Location current) {
+    int row = current.getR();
+    int col = current.getC() + 1;
     if (col >= 9) {
-      col = 0;
       row++;
+      col = 0;
       if (row >= 9) {
         return new Location(-1, -1);
       }
     }
-    return new Location(row, col);
+    // Keep going if it is immutable
+    if (tiles[row][col].isImmutable()) {
+      return getNextLocation(new Location(row, col));
+    } else {
+      return new Location(row, col);
+    }
   }
 
   void hardSolve(int[][] solution) {
@@ -137,4 +158,21 @@ class Game {
     }
     return false;
   }
+  
+  
+  // ********************
+  // Solver Time
+  // ********************
+  
+  Location current;
+  
+  void beginSolve() {
+    current = getNextLocation(new Location(0, -1));
+    println("First eligable location: ", current.row, current.col);
+  }
+  
+  void step() {
+    
+  }
+  
 }

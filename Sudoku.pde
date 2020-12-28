@@ -7,10 +7,12 @@ void setup() {
   textSize(32);
   textAlign(CENTER);
   game = new Game(board_easy1);
+  game.beginSolve();
 }
 
 void draw() {
   background(0);
+  game.step();
   game.show();
 }
 
@@ -18,10 +20,6 @@ void mouseClicked() {
   int col = (int)(mouseX / SCALE);
   int row = (int)(mouseY / SCALE);
   game.changeValue(row, col);
-  
-  println("Current: ", row, col);
-  Location next = game.getNextLocation(new Location(row, col));
-  println("Next: ", next.getR(), next.getC());
 }
 
 void keyPressed() {

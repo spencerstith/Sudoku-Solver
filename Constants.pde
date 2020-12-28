@@ -1,5 +1,5 @@
 final int SCALE = 60;
-final color BLUE = color(0, 255, 0);
+final color GREEN = color(0, 255, 0);
 final color WHITE = color(255, 255, 255);
 final color HIGHLIGHT = color(255, 255, 0, 255 / 2);
 

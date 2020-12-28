@@ -12,6 +12,10 @@ class Tile {
     this.highlight = color(255, 255, 255, 0);
   }
   
+  boolean isImmutable() {
+    return immutable;
+  }
+  
   void setHighlight(color hightlight) {
     this.highlight = hightlight;
   }
@@ -34,7 +38,7 @@ class Tile {
     fill(highlight);    
     rect(location.getXValue(), location.getYValue(), SCALE, SCALE);
     if (immutable) {
-      fill(BLUE);
+      fill(GREEN);
     } else {
       fill(WHITE);
     }

@@ -15,7 +15,13 @@ void draw() {
 }
 
 void mouseClicked() {
-  game.changeValue(mouseX, mouseY);
+  int col = (int)(mouseX / SCALE);
+  int row = (int)(mouseY / SCALE);
+  game.changeValue(row, col);
+  
+  println("Current: ", row, col);
+  Location next = game.getNextLocation(new Location(row, col));
+  println("Next: ", next.getR(), next.getC());
 }
 
 void keyPressed() {

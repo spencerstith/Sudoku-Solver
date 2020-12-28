@@ -12,7 +12,7 @@ class Tile {
     this.highlight = color(255, 255, 255, 0);
   }
   
-  void setHightlight(color hightlight) {
+  void setHighlight(color hightlight) {
     this.highlight = hightlight;
   }
   

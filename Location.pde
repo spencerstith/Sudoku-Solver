@@ -8,6 +8,14 @@ class Location {
     this.col = col;
   }
   
+  int getR() {
+    return row;
+  }
+  
+  int getC() {
+    return col;
+  }
+  
   int getXValue() {
     return col * SCALE;
   }

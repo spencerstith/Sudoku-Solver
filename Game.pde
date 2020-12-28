@@ -1,6 +1,7 @@
 class Game {
 
   Tile[][] tiles;
+  Location current;
 
   Game(int[][] board) {
     tiles = new Tile[9][9];
@@ -14,6 +15,11 @@ class Game {
           );
       }
     }
+    this.current = new Location(0, 0);
+  }
+  
+  Tile getTile(int row, int col) {
+    return tiles[row][col];
   }
 
   void show() {
@@ -32,6 +38,19 @@ class Game {
     line(0, 6 * SCALE, width, 6 * SCALE);
     strokeWeight(1);
   }
+  
+  Location getNextLocation(Location current) {
+    int col = current.getC() + 1;
+    int row = current.getR();
+    if (col >= 9) {
+      col = 0;
+      row++;
+      if (row >= 9) {
+        return new Location(-1, -1);
+      }
+    }
+    return new Location(row, col);
+  }
 
   void hardSolve(int[][] solution) {
     for (int row = 0; row < tiles.length; row++) {
@@ -44,9 +63,7 @@ class Game {
     }
   }
 
-  void changeValue(float x, float y) {
-    int col = (int)(x / SCALE);
-    int row = (int)(y / SCALE);
+  void changeValue(int row, int col) {
     tiles[row][col].plusOne();
   }
 

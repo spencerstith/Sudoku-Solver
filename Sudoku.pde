@@ -8,6 +8,7 @@ void setup() {
   textAlign(CENTER);
   game = new Game(board_easy1);
   game.beginSolve();
+  frameRate(5);
 }
 
 void draw() {

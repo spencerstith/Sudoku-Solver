@@ -28,6 +28,9 @@ class Game {
       }
     }
 
+    // Highlight current cell
+    tiles[current.getR()][current.getC()].setHighlight(HIGHLIGHT);
+
     // Show thick lines
     strokeWeight(3);
     line(3 * SCALE, 0, 3 * SCALE, height);
@@ -37,6 +40,136 @@ class Game {
     strokeWeight(1);
   }
 
+  void changeValue(int row, int col) {
+    tiles[row][col].plusOne();
+  }
+
+  // ********************
+  // Checkers
+  // ********************
+
+  // Checking driver
+  boolean checkBoard() {
+    return checkZeros() && checkRows() && checkColumns() && checkSquares();
+  }
+  
+  // Zeros
+  boolean checkZeros() {
+    for (int row = 0; row < 9; row++) {
+      for (int col = 0; col < 9; col++) {
+        if (tiles[row][col].getValue() == 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  // Rows
+  boolean checkRows() {
+    for (int row = 0; row < 9; row++) {
+      boolean[] discovered = new boolean[9];
+      for (int col = 0; col < 9; col++) {
+        int index = tiles[row][col].getValue() - 1;
+        if (discovered[index]) {
+          return false;
+        }
+        discovered[index] = true;
+      }
+      if (contains(discovered, false)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Columns
+  boolean checkColumns() {
+    for (int col = 0; col < 9; col++) {
+      boolean[] discovered = new boolean[9];
+      for (int row = 0; row < 9; row++) {
+        int index = tiles[col][row].getValue() - 1;
+        if (discovered[index]) {
+          return false;
+        }
+        discovered[index] = true;
+      }
+      if (contains(discovered, false)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Squares
+  boolean checkSquares() {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        boolean[] discovered = new boolean[9];
+        for (int m = 1; m <= 3; m++) {
+          for (int n = 1; n <= 3; n++) {
+            int index= tiles[i * 3 + m - 1][j * 3 + n - 1].getValue() - 1;
+            if (discovered[index]) {
+              return false;
+            }
+            discovered[index] = true;
+          }
+        }
+        if (contains(discovered, false)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+  // Checks to see if an array contains a certain boolean value
+  boolean contains(boolean[] arr, boolean value) {
+    for (int i = 0; i < arr.length; i++) {
+      if (arr[i] == value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ********************
+  // Solvers
+  // ********************
+
+  // Force solve with provided solution. Used for debugging and testing purposes
+  void hardSolve(int[][] solution) {
+    for (int row = 0; row < tiles.length; row++) {
+      for (int col = 0; col < tiles.length; col++) {
+        int value = solution[row][col];
+        if (value != 0) {
+          tiles[row][col].setValue(value);
+        }
+      }
+    }
+  }
+  
+  // Used to keep track of current cell being analyzed
+  Location current;
+
+  void beginSolve() {
+    current = getNextLocation(new Location(0, -1));
+  }
+
+  void step() {
+    /*
+    // See if we have a solution
+     if (checkBoard()) {
+     noLoop();
+     }
+     */
+    int currentValue = tiles[current.getR()][current.getC()].getValue();
+    if (currentValue == 9) {
+      current = getLastLocation(current);
+    }
+  }
+  
+  // Helper functions for solvers
   Location getLastLocation(Location current) {
     int row = current.getR();
     int col = current.getC() - 1;
@@ -72,107 +205,4 @@ class Game {
       return new Location(row, col);
     }
   }
-
-  void hardSolve(int[][] solution) {
-    for (int row = 0; row < tiles.length; row++) {
-      for (int col = 0; col < tiles.length; col++) {
-        int value = solution[row][col];
-        if (value != 0) {
-          tiles[row][col].setValue(value);
-        }
-      }
-    }
-  }
-
-  void changeValue(int row, int col) {
-    tiles[row][col].plusOne();
-  }
-
-  boolean checkBoard() {
-    // Find zeros
-    for (int row = 0; row < 9; row++) {
-      for (int col = 0; col < 9; col++) {
-        if (tiles[row][col].getValue() == 0) {
-          return false;
-        }
-      }
-    }
-
-    // Rows
-    for (int row = 0; row < 9; row++) {
-      boolean[] discovered = new boolean[9];
-      for (int col = 0; col < 9; col++) {
-        int index = tiles[row][col].getValue() - 1;
-        if (discovered[index]) {
-          return false;
-        }
-        discovered[index] = true;
-      }
-      if (contains(discovered, false)) {
-        return false;
-      }
-    }
-
-    // Columns
-    for (int col = 0; col < 9; col++) {
-      boolean[] discovered = new boolean[9];
-      for (int row = 0; row < 9; row++) {
-        int index = tiles[col][row].getValue() - 1;
-        if (discovered[index]) {
-          return false;
-        }
-        discovered[index] = true;
-      }
-      if (contains(discovered, false)) {
-        return false;
-      }
-    }
-
-    // Squares
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        boolean[] discovered = new boolean[9];
-        for (int m = 1; m <= 3; m++) {
-          for (int n = 1; n <= 3; n++) {
-            int index= tiles[i * 3 + m - 1][j * 3 + n - 1].getValue() - 1;
-            if (discovered[index]) {
-              return false;
-            }
-            discovered[index] = true;
-          }
-        }
-        if (contains(discovered, false)) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  boolean contains(boolean[] arr, boolean value) {
-    for (int i = 0; i < arr.length; i++) {
-      if (arr[i] == value) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  
-  // ********************
-  // Solver Time
-  // ********************
-  
-  Location current;
-  
-  void beginSolve() {
-    current = getNextLocation(new Location(0, -1));
-    println("First eligable location: ", current.row, current.col);
-  }
-  
-  void step() {
-    
-  }
-  
 }

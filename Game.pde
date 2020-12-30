@@ -52,7 +52,7 @@ class Game {
   boolean checkBoard() {
     return checkZeros() && checkRows() && checkColumns() && checkSquares();
   }
-  
+
   // Zeros
   boolean checkZeros() {
     for (int row = 0; row < 9; row++) {
@@ -67,17 +67,14 @@ class Game {
 
   // Rows
   boolean checkRows() {
-    for (int row = 0; row < 9; row++) {
-      boolean[] discovered = new boolean[9];
-      for (int col = 0; col < 9; col++) {
-        int index = tiles[row][col].getValue() - 1;
-        if (discovered[index]) {
-          return false;
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        int value = tiles[i][j].getValue();
+        for (int k = 0; k < 9; k++) {
+          if (k != j && tiles[i][k].getValue() == value) {
+            return false;
+          }
         }
-        discovered[index] = true;
-      }
-      if (contains(discovered, false)) {
-        return false;
       }
     }
     return true;
@@ -85,17 +82,14 @@ class Game {
 
   // Columns
   boolean checkColumns() {
-    for (int col = 0; col < 9; col++) {
-      boolean[] discovered = new boolean[9];
-      for (int row = 0; row < 9; row++) {
-        int index = tiles[col][row].getValue() - 1;
-        if (discovered[index]) {
-          return false;
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        int value = tiles[j][i].getValue();
+        for (int k = 0; k < 9; k++) {
+          if (k != j && tiles[k][i].getValue() == value) {
+            return false;
+          }
         }
-        discovered[index] = true;
-      }
-      if (contains(discovered, false)) {
-        return false;
       }
     }
     return true;
@@ -105,32 +99,46 @@ class Game {
   boolean checkSquares() {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        boolean[] discovered = new boolean[9];
         for (int m = 1; m <= 3; m++) {
           for (int n = 1; n <= 3; n++) {
-            int index= tiles[i * 3 + m - 1][j * 3 + n - 1].getValue() - 1;
-            if (discovered[index]) {
-              return false;
+            int value = tiles[i * 3 + m - 1][j * 3 + n - 1].getValue();
+            for (int w = 1; w <= 3; w++) {
+              for (int z = 1; z <= 3; z++) {
+                if (!(m == w && n == z) && tiles[i * 3 + w - 1][j * 3 + z - 1].getValue() == value) {
+                  return false;
+                }
+              }
             }
-            discovered[index] = true;
           }
-        }
-        if (contains(discovered, false)) {
-          return false;
         }
       }
     }
     return true;
   }
-  
-  // Checks to see if an array contains a certain boolean value
-  boolean contains(boolean[] arr, boolean value) {
-    for (int i = 0; i < arr.length; i++) {
-      if (arr[i] == value) {
-        return true;
+
+  // See if inserting a number will break the game
+  boolean safelyPlacable(int row, int col, int value) {
+    // First see if the number is immutable. That will break it
+    if (tiles[row][col].isImmutable()) {
+      return false;
+    }
+    // Check the row
+    for (int i = 0; i < 9; i++) {
+      if (tiles[row][i].getValue() == value) {
+        return false;
       }
     }
-    return false;
+
+    // Check the column
+    for (int i = 0; i < 9; i++) {
+      if (tiles[i][col].getValue() == value) {
+        return false;
+      }
+    }
+
+    // Check the square
+
+    return true;
   }
 
   // ********************
@@ -148,7 +156,7 @@ class Game {
       }
     }
   }
-  
+
   // Used to keep track of current cell being analyzed
   Location current;
 
@@ -168,7 +176,7 @@ class Game {
       current = getLastLocation(current);
     }
   }
-  
+
   // Helper functions for solvers
   Location getLastLocation(Location current) {
     int row = current.getR();

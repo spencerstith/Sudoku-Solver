@@ -1,3 +1,10 @@
+// HOW TO SOLVE
+// In checkers area, include a method that will check wheter or not changing a value will break the board
+//   If it does, increment the number and check again.
+//     If you get to 9 and it still doesn't work, return -1 and check for that in the step method.
+//     Go back one and increment from there, continuing onward.
+//   If it does not, place that value there and move on.
+
 Game game;
 
 void setup() {

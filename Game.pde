@@ -50,7 +50,8 @@ class Game {
 
   // Checking driver
   boolean checkBoard() {
-    return checkZeros() && checkRows() && checkColumns() && checkSquares();
+    //return checkZeros() && checkRows() && checkColumns() && checkSquares();
+    return checkSquares();
   }
 
   // Zeros
@@ -65,30 +66,46 @@ class Game {
     return true;
   }
 
-  // Rows
+  // All Rows
   boolean checkRows() {
     for (int i = 0; i < 9; i++) {
+      if (!checkRow(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  // Single row
+  boolean checkRow(int row) {
+    for (int i = 0; i < 9; i++) {
+      int value = tiles[row][i].getValue();
       for (int j = 0; j < 9; j++) {
-        int value = tiles[i][j].getValue();
-        for (int k = 0; k < 9; k++) {
-          if (k != j && tiles[i][k].getValue() == value) {
-            return false;
-          }
+        if (i != j && tiles[row][j].getValue() == value) {
+          return false;
         }
       }
     }
     return true;
   }
 
-  // Columns
+  // All Columns
   boolean checkColumns() {
     for (int i = 0; i < 9; i++) {
+      if (!checkColumn(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  // Single Column
+  boolean checkColumn(int col) {
+    for (int i = 0; i < 9; i++) {
+      int value = tiles[i][col].getValue();
       for (int j = 0; j < 9; j++) {
-        int value = tiles[j][i].getValue();
-        for (int k = 0; k < 9; k++) {
-          if (k != j && tiles[k][i].getValue() == value) {
-            return false;
-          }
+        if (i != j && tiles[j][col].getValue() == value) {
+          return false;
         }
       }
     }
@@ -99,15 +116,22 @@ class Game {
   boolean checkSquares() {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        for (int m = 1; m <= 3; m++) {
-          for (int n = 1; n <= 3; n++) {
-            int value = tiles[i * 3 + m - 1][j * 3 + n - 1].getValue();
-            for (int w = 1; w <= 3; w++) {
-              for (int z = 1; z <= 3; z++) {
-                if (!(m == w && n == z) && tiles[i * 3 + w - 1][j * 3 + z - 1].getValue() == value) {
-                  return false;
-                }
-              }
+        if (!checkSquare(i, j)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+  boolean checkSquare(int sqRow, int sqCol) {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        int value = tiles[sqRow * 3 + i][sqCol * 3 + j].getValue();
+        for (int m = 0; m < 3; m++) {
+          for (int n = 0; n < 3; n++) {
+            if (!(i == m && j == n) && tiles[sqRow * 3 + m][sqCol * 3 + n].getValue() == value) {
+              return false;
             }
           }
         }
@@ -116,30 +140,6 @@ class Game {
     return true;
   }
 
-  // See if inserting a number will break the game
-  boolean safelyPlacable(int row, int col, int value) {
-    // First see if the number is immutable. That will break it
-    if (tiles[row][col].isImmutable()) {
-      return false;
-    }
-    // Check the row
-    for (int i = 0; i < 9; i++) {
-      if (tiles[row][i].getValue() == value) {
-        return false;
-      }
-    }
-
-    // Check the column
-    for (int i = 0; i < 9; i++) {
-      if (tiles[i][col].getValue() == value) {
-        return false;
-      }
-    }
-
-    // Check the square
-
-    return true;
-  }
 
   // ********************
   // Solvers
@@ -165,16 +165,7 @@ class Game {
   }
 
   void step() {
-    /*
-    // See if we have a solution
-     if (checkBoard()) {
-     noLoop();
-     }
-     */
-    int currentValue = tiles[current.getR()][current.getC()].getValue();
-    if (currentValue == 9) {
-      current = getLastLocation(current);
-    }
+    
   }
 
   // Helper functions for solvers
